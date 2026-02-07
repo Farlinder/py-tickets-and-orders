@@ -7,10 +7,9 @@ from django.db.models import QuerySet
 from db.models import Order, Ticket, User
 
 
-def create_order(
-    tickets: list[dict],
-    username: str,
-    date: str = None) -> Order:
+def create_order(tickets: list[dict],
+                 username: str,
+                 date: str = None) -> Order:
     with transaction.atomic():
         user = User.objects.get(username=username)
         order = Order.objects.create(user=user)
@@ -32,4 +31,3 @@ def get_orders(username: str = None) -> QuerySet:
         queryset = queryset.filter(user__username=username)
 
     return queryset
-

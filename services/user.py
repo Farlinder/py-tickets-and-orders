@@ -19,15 +19,19 @@ def create_user(username: str,
     user.save()
     return user
 
+
 def get_user(user_id: int) -> User:
     return User.objects.get(pk=user_id)
 
-def update_user(user_id: int,
-    username: str = None,
-    password: str = None,
-    email: str = None,
-    first_name: str = None,
-    last_name: str = None,) -> User:
+
+def update_user(
+        user_id: int,
+        username: str = None,
+        password: str = None,
+        email: str = None,
+        first_name: str = None,
+        last_name: str = None,
+) -> User:
 
     user = User.objects.get(pk=user_id)
 
