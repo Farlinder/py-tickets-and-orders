@@ -13,23 +13,23 @@ User = get_user_model()
 def create_order(
         tickets: list[dict],
         username: str,
-        date: str = None,
+        date: str = None
 ) -> Order:
+
     user = User.objects.get(username=username)
 
     order = Order.objects.create(user=user)
 
     if date:
         order.created_at = datetime.strptime(date, "%Y-%m-%d %H:%M")
-
-    order.save()
+        order.save()
 
     for ticket in tickets:
         Ticket.objects.create(
             movie_session_id=ticket["movie_session"],
             order=order,
             seat=ticket["seat"],
-            row=ticket["row"],
+            row=ticket["row"]
         )
 
     return order
@@ -38,6 +38,7 @@ def create_order(
 def get_orders(
         username: str = None
 ) -> QuerySet[Order]:
+
     queryset = Order.objects.all()
 
     if username:

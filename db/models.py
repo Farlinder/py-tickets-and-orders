@@ -21,19 +21,11 @@ class Actor(models.Model):
 class Movie(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    actors = models.ManyToManyField(
-        to=Actor,
-        related_name="movies"
-    )
-    genres = models.ManyToManyField(
-        to=Genre,
-        related_name="movies"
-    )
+    actors = models.ManyToManyField(Actor, related_name="movies")
+    genres = models.ManyToManyField(Genre, related_name="movies")
 
     class Meta:
-        indexes = [
-            models.Index(fields=["title"])
-        ]
+        indexes = [models.Index(fields=["title"])]
 
     def __str__(self) -> str:
         return self.title
@@ -54,13 +46,15 @@ class CinemaHall(models.Model):
 
 class MovieSession(models.Model):
     show_time = models.DateTimeField()
+
     cinema_hall = models.ForeignKey(
-        to=CinemaHall,
+        CinemaHall,
         on_delete=models.CASCADE,
         related_name="movie_sessions"
     )
+
     movie = models.ForeignKey(
-        to=Movie,
+        Movie,
         on_delete=models.CASCADE,
         related_name="movie_sessions"
     )
@@ -75,6 +69,7 @@ class User(AbstractUser):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -94,21 +89,15 @@ class Ticket(models.Model):
         on_delete=models.CASCADE,
         related_name="tickets"
     )
+
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
         related_name="tickets"
     )
+
     row = models.IntegerField()
     seat = models.IntegerField()
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["movie_session", "row", "seat"],
-                name="unique_ticket_position"
-            )
-        ]
 
     def __str__(self) -> str:
         return (
@@ -138,3 +127,11 @@ class Ticket(models.Model):
     def save(self, *args, **kwargs) -> None:
         self.full_clean()
         super().save(*args, **kwargs)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["movie_session", "row", "seat"],
+                name="unique_ticket_position"
+            )
+        ]
